@@ -42,6 +42,7 @@ typedef struct shared_data_s {
 	uint16_t coin_counter;
 	uint8_t  opbtn;
 	uint8_t  beams;
+	uint16_t version;
 } shared_data_t;
 
 shared_data_t g_shared_data;
@@ -139,19 +140,13 @@ static unsigned int __stdcall jvs_poll_thread_proc(void *ctx)
 /* chuniio exports */
 uint16_t __cdecl chuni_io_get_api_version(void)
 {
-    return 0x0101;
-}
-
-HRESULT __cdecl chuni_io_jvs_init(void)
-{
-
 #ifdef _WIN64
 /* x64 must just open the shmem and do nothing else */
 if (!shmem_load())
 {
 	return -1;
 }
-	return S_OK;
+    return g_shared_data.version;
 #endif
 
 	/* this is the first function called so let's setup the chuniio forwarding */
@@ -176,6 +171,28 @@ if (!shmem_load())
 		return -1;
 	}
 	
+	if ( _chuni_io_get_api_version == NULL )
+	{
+		g_shared_data.version = 0x0100;
+	}
+	else
+	{
+		g_shared_data.version = _chuni_io_get_api_version();
+		if (g_shared_data.version > 0x0101)
+			g_shared_data.version = 0x0101;
+	}
+
+	SHMEM_WRITE(&g_shared_data, sizeof(shared_data_t));
+	
+    return g_shared_data.version;
+}
+
+HRESULT __cdecl chuni_io_jvs_init(void)
+{
+#ifdef _WIN64
+/* x86 only */
+return S_OK;
+#endif
 	_chuni_io_jvs_init();
 	
 	/* start jvs poll thread now that jvs_init is done */
