@@ -2,7 +2,7 @@
 
 chu2to3 is a chuniio wrapper which allows you to use chuniio.dll in chusan.
 
-It's been tested on the RedBoard and Yubideck so far but should work with other chuniio implementations.
+It's been tested on the RedBoard, Yubideck, Laverita and Tasoller so far but should work with other chuniio implementations.
 
 # Acknowledgments
 
