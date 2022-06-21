@@ -129,6 +129,7 @@ static unsigned int __stdcall jvs_poll_thread_proc(void *ctx)
 {
     while (1) {
 		_chuni_io_jvs_read_coin_counter(&g_shared_data.coin_counter);
+		g_shared_data.opbtn = 0;
 		_chuni_io_jvs_poll(&g_shared_data.opbtn, &g_shared_data.beams);
 		SHMEM_WRITE(&g_shared_data, sizeof(shared_data_t));
 		Sleep(1);
